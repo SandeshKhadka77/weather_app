@@ -25,14 +25,14 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className="mx-auto min-h-screen w-[calc(100%-2rem)] max-w-6xl sm:w-[calc(100%-2.5rem)]">
       <Header />
 
-      <main className="main-content">
-        <section className="intro" aria-labelledby="page-title">
-          <p className="eyebrow">Weather dashboard</p>
-          <h1 id="page-title">Know your weather before you step outside.</h1>
-          <p className="intro-text">
+      <main className="py-14 sm:py-20">
+        <section className="max-w-2xl" aria-labelledby="page-title">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.08em] text-[#f07c62]">Weather dashboard</p>
+          <h1 className="mb-5 max-w-2xl text-5xl font-bold leading-[0.98] tracking-normal sm:text-7xl" id="page-title">Know your weather before you step outside.</h1>
+          <p className="max-w-lg text-base leading-relaxed text-[#5c7373] sm:text-lg">
             Search for a city to see current conditions and a five-day forecast.
           </p>
         </section>
@@ -43,7 +43,7 @@ function App() {
           onSearch={handleSearch}
         />
 
-        <div className="weather-layout">
+        <div className="mt-8 grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
           <WeatherCard
             city={selectedCity}
             country="NP"
