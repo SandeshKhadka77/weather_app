@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Sunrise, Sunset } from 'lucide-react'
 import Header from './components/Header'
 import ForecastList from './components/ForecastList'
@@ -6,10 +6,14 @@ import HourlyForecast from './components/HourlyForecast'
 import SearchBar from './components/SearchBar'
 import WeatherDetails from './components/WeatherDetails'
 import WeatherCard from './components/WeatherCard'
+import { fetchWeatherByCity } from './services/weatherService'
+import type { WeatherData } from './types/weather'
 
 function App() {
   const [searchCity, setSearchCity] = useState('Kathmandu')
-  const [selectedCity, setSelectedCity] = useState('Kathmandu')
+  const [weather, setWeather] = useState<WeatherData | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
 
   const forecast = [
     { day: 'Today', condition: 'partly-cloudy' as const, high: 26, low: 16 },
@@ -28,11 +32,33 @@ function App() {
     { time: '10 PM', condition: 'night' as const, temperature: 16 },
   ]
 
+  async function loadWeather(city: string): Promise<void> {
+    setIsLoading(true)
+    setErrorMessage('')
+
+    try {
+      const weatherData = await fetchWeatherByCity(city)
+      setWeather(weatherData)
+      setSearchCity(weatherData.city)
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Could not load weather data.'
+      setErrorMessage(message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    // The first request synchronizes the initial screen with the weather service.
+    // set state in effect
+    void loadWeather('Kathmandu')
+  }, [])
+
   function handleSearch(): void {
     const trimmedCity = searchCity.trim()
 
     if (trimmedCity.length > 0) {
-      setSelectedCity(trimmedCity)
+      void loadWeather(trimmedCity)
     }
   }
 
@@ -43,10 +69,21 @@ function App() {
       <main className="py-8 sm:py-10">
         <SearchBar city={searchCity} onCityChange={setSearchCity} onSearch={handleSearch} />
 
-        <div className="mt-5 grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(260px,0.8fr)]">
+        {errorMessage && (
+          <p className="mt-4 rounded-xl border border-red-400/20 bg-red-400/10 px-4 py-3 text-sm text-red-200" role="alert">
+            {errorMessage}
+          </p>
+        )}
+
+        {isLoading && (
+          <p className="mt-5 text-sm text-[#8ba3c1]" role="status">Loading weather for {searchCity}...</p>
+        )}
+
+        {weather && !isLoading && (
+          <div className="mt-5 grid min-w-0 gap-4 lg:grid-cols-[minmax(0,1.45fr)_minmax(260px,0.8fr)]">
           <div className="grid min-w-0 gap-4">
-            <WeatherCard city={selectedCity} country="NP" temperature={22} condition="Partly cloudy" feelsLike={22} />
-            <WeatherDetails humidity={68} windSpeed={12} visibility={10} pressure={1012} />
+            <WeatherCard city={weather.city} country={weather.country} temperature={weather.temperature} condition={weather.condition} feelsLike={weather.feelsLike} />
+            <WeatherDetails humidity={weather.humidity} windSpeed={weather.windSpeed} visibility={weather.visibility} pressure={weather.pressure} />
             <HourlyForecast hours={hourlyForecast} />
           </div>
           <div className="grid min-w-0 content-start gap-4">
@@ -59,7 +96,8 @@ function App() {
               </div>
             </section>
           </div>
-        </div>
+          </div>
+        )}
       </main>
     </div>
   )
