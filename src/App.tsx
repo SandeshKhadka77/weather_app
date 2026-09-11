@@ -15,23 +15,6 @@ function App() {
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
 
-  const forecast = [
-    { day: 'Today', condition: 'partly-cloudy' as const, high: 26, low: 16 },
-    { day: 'Tue, Sep 9', condition: 'sunny' as const, high: 27, low: 17 },
-    { day: 'Wed, Sep 10', condition: 'rainy' as const, high: 25, low: 16 },
-    { day: 'Thu, Sep 11', condition: 'cloudy' as const, high: 24, low: 15 },
-    { day: 'Fri, Sep 12', condition: 'sunny' as const, high: 26, low: 16 },
-  ]
-
-  const hourlyForecast = [
-    { time: 'Now', condition: 'partly-cloudy' as const, temperature: 22 },
-    { time: '6 PM', condition: 'sunny' as const, temperature: 21 },
-    { time: '7 PM', condition: 'night' as const, temperature: 19 },
-    { time: '8 PM', condition: 'night' as const, temperature: 18 },
-    { time: '9 PM', condition: 'night' as const, temperature: 17 },
-    { time: '10 PM', condition: 'night' as const, temperature: 16 },
-  ]
-
   async function loadWeather(city: string): Promise<void> {
     setIsLoading(true)
     setErrorMessage('')
@@ -50,7 +33,6 @@ function App() {
 
   useEffect(() => {
     // The first request synchronizes the initial screen with the weather service.
-    // set state in effect
     void loadWeather('Kathmandu')
   }, [])
 
@@ -84,10 +66,10 @@ function App() {
           <div className="grid min-w-0 gap-4">
             <WeatherCard city={weather.city} country={weather.country} temperature={weather.temperature} condition={weather.condition} feelsLike={weather.feelsLike} />
             <WeatherDetails humidity={weather.humidity} windSpeed={weather.windSpeed} visibility={weather.visibility} pressure={weather.pressure} />
-            <HourlyForecast hours={hourlyForecast} />
+            <HourlyForecast hours={weather.hourlyForecast} />
           </div>
           <div className="grid min-w-0 content-start gap-4">
-            <ForecastList forecast={forecast} />
+            <ForecastList forecast={weather.dailyForecast} />
             <section className="rounded-2xl border border-white/10 bg-[#102544] p-5" aria-labelledby="sun-title">
               <h2 className="mb-5 text-sm font-semibold text-white" id="sun-title">Sunrise & sunset</h2>
               <div className="grid grid-cols-2 gap-3">
