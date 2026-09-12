@@ -1,18 +1,12 @@
 import { Cloud, CloudRain, CloudSun, Sun } from 'lucide-react'
-
-interface ForecastDay {
-  day: string
-  condition: 'sunny' | 'partly-cloudy' | 'cloudy' | 'rainy'
-  high: number
-  low: number
-}
+import type { DailyForecastItem } from '../types/weather'
 
 interface ForecastListProps {
-  forecast: ForecastDay[]
+  forecast: DailyForecastItem[]
 }
 
 function ForecastList({ forecast }: ForecastListProps) {
-  const weatherIcons = { sunny: Sun, 'partly-cloudy': CloudSun, cloudy: Cloud, rainy: CloudRain }
+  const weatherIcons = { sunny: Sun, 'partly-cloudy': CloudSun, cloudy: Cloud, rainy: CloudRain, snowy: Cloud, night: Cloud }
 
   return (
     <section className="min-w-0 rounded-2xl border border-white/10 bg-[#102544] p-4 sm:p-5" aria-labelledby="forecast-title">
