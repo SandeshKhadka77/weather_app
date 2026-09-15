@@ -1,10 +1,5 @@
 import { Cloud, CloudRain, CloudSun, Moon, Sun } from 'lucide-react'
-
-interface HourlyForecastItem {
-  time: string
-  condition: 'sunny' | 'partly-cloudy' | 'cloudy' | 'rainy' | 'night'
-  temperature: number
-}
+import type { HourlyForecastItem } from '../types/weather'
 
 interface HourlyForecastProps {
   hours: HourlyForecastItem[]
@@ -16,6 +11,7 @@ const weatherIcons = {
   cloudy: Cloud,
   rainy: CloudRain,
   night: Moon,
+  snowy: Cloud,
 }
 
 function HourlyForecast({ hours }: HourlyForecastProps) {
